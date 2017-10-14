@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.water.dao.CustomerMapper" >
+  <resultMap id="BaseResultMap" type="cn.water.pojo.Customer" >
+    <id column="cId" property="cid" jdbcType="INTEGER" />
+    <result column="cName" property="cname" jdbcType="VARCHAR" />
+    <result column="cPhone" property="cphone" jdbcType="VARCHAR" />
+    <result column="aera" property="aera" jdbcType="VARCHAR" />
+    <result column="cAddress" property="caddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    cId, cName, cPhone, aera, cAddress
+  </sql>
+  <sql id="selectAllCustomer_where">
+  	<where>
+  		<if test="keyword != null and keyword != ''">
+  			cName like '%${keyword}%'
+  		</if>
+  	</where>
+  </sql>
+  <!-- 自己写的 -->
+  <select id="selectAllCustomer" resultMap="BaseResultMap" parameterType="cn.water.vo.QueryVo" >
+  	select * from customer 
+  	<include refid="selectAllCustomer_where"></include>
+  	limit #{start},#{size}
+  </select>
+  <select id="getCount" resultType="java.lang.Integer" parameterType="cn.water.vo.QueryVo">
+  	select count(*) from customer 
+  	<include refid="selectAllCustomer_where"></include>
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- 自动生成 -->
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.water.pojo.CustomerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where cId = #{cid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from customer
+    where cId = #{cid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.water.pojo.CustomerExample" >
+    delete from customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.water.pojo.Customer" >
+    insert into customer (cId, cName, cPhone, 
+      aera, cAddress)
+    values (#{cid,jdbcType=INTEGER}, #{cname,jdbcType=VARCHAR}, #{cphone,jdbcType=VARCHAR}, 
+      #{aera,jdbcType=VARCHAR}, #{caddress,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.water.pojo.Customer" >
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        cId,
+      </if>
+      <if test="cname != null" >
+        cName,
+      </if>
+      <if test="cphone != null" >
+        cPhone,
+      </if>
+      <if test="aera != null" >
+        aera,
+      </if>
+      <if test="caddress != null" >
+        cAddress,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="cphone != null" >
+        #{cphone,jdbcType=VARCHAR},
+      </if>
+      <if test="aera != null" >
+        #{aera,jdbcType=VARCHAR},
+      </if>
+      <if test="caddress != null" >
+        #{caddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.water.pojo.CustomerExample" resultType="java.lang.Integer" >
+    select count(*) from customer
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update customer
+    <set >
+      <if test="record.cid != null" >
+        cId = #{record.cid,jdbcType=INTEGER},
+      </if>
+      <if test="record.cname != null" >
+        cName = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cphone != null" >
+        cPhone = #{record.cphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aera != null" >
+        aera = #{record.aera,jdbcType=VARCHAR},
+      </if>
+      <if test="record.caddress != null" >
+        cAddress = #{record.caddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update customer
+    set cId = #{record.cid,jdbcType=INTEGER},
+      cName = #{record.cname,jdbcType=VARCHAR},
+      cPhone = #{record.cphone,jdbcType=VARCHAR},
+      aera = #{record.aera,jdbcType=VARCHAR},
+      cAddress = #{record.caddress,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.water.pojo.Customer" >
+    update customer
+    <set >
+      <if test="cname != null" >
+        cName = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="cphone != null" >
+        cPhone = #{cphone,jdbcType=VARCHAR},
+      </if>
+      <if test="aera != null" >
+        aera = #{aera,jdbcType=VARCHAR},
+      </if>
+      <if test="caddress != null" >
+        cAddress = #{caddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cId = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.water.pojo.Customer" >
+    update customer
+    set cName = #{cname,jdbcType=VARCHAR},
+      cPhone = #{cphone,jdbcType=VARCHAR},
+      aera = #{aera,jdbcType=VARCHAR},
+      cAddress = #{caddress,jdbcType=VARCHAR}
+    where cId = #{cid,jdbcType=INTEGER}
+  </update>
+</mapper>

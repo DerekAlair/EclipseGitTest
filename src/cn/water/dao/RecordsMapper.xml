@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.water.dao.RecordsMapper" >
+  <resultMap id="BaseResultMap" type="cn.water.pojo.Records" >
+    <id column="rId" property="rid" jdbcType="INTEGER" />
+    <result column="oId" property="oid" jdbcType="INTEGER" />
+    <result column="sName" property="sname" jdbcType="VARCHAR" />
+    <result column="sDate" property="sdate" jdbcType="DATE" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="cName" property="cname" jdbcType="VARCHAR" />
+    <result column="cAddress" property="caddress" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    rId, oId, sName, sDate, money, cName, cAddress
+  </sql>
+  
+  <sql id="waterRecords_where">
+	<where>
+		<if test="keyword != null and keyword != ''">
+	    	ro.sName like '%${keyword}%'
+	    </if>
+	</where>
+  </sql>
+  <sql id="salesRecord_where">
+  	<where>
+  		<if test="">
+  		
+  		</if>
+  	</where>
+  </sql>
+  <!-- 自己写  -->
+  <select id="waterRecords" resultType="cn.water.result.RecordAndOrder" parameterType="cn.water.vo.QueryVo">
+  	select * from (select r.*,o.pName,o.wNumber from records r,orderes o where r.oId=o.oId) ro
+	<include refid="waterRecords_where"></include>
+	limit #{start},#{size}
+  </select>
+  <select id="getCount" resultType="java.lang.Integer" parameterType="cn.water.vo.QueryVo">
+  	select count(*) from (select r.*,o.pName,o.wNumber from records r,orderes o where r.oId=o.oId) ro
+  	<include refid="waterRecords_where"></include>
+  </select>
+  
+  <!-- 销售记录，未完成  -->
+  <select id="salesRecord" resultType="cn.water.result.SalesResult" parameterType="cn.water.vo.QuerySales">
+  	select * from (select o.aera,o.pName,o.price,o.wNumber,r.money from orderes o,records r where o.oId=r.rId) or
+  	<include refid="salesRecord_where"></include>
+  </select>
+  <select id="getCountqs" resultType="java.lang.Integer" parameterType="cn.water.vo.QuerySales">
+  
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- 自动生成 -->
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.water.pojo.RecordsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from records
+    where rId = #{rid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from records
+    where rId = #{rid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.water.pojo.RecordsExample" >
+    delete from records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.water.pojo.Records" >
+    insert into records (rId, oId, sName, 
+      sDate, money, cName, cAddress
+      )
+    values (#{rid,jdbcType=INTEGER}, #{oid,jdbcType=INTEGER}, #{sname,jdbcType=VARCHAR}, 
+      #{sdate,jdbcType=DATE}, #{money,jdbcType=DOUBLE}, #{cname,jdbcType=VARCHAR}, #{caddress,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.water.pojo.Records" >
+    insert into records
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        rId,
+      </if>
+      <if test="oid != null" >
+        oId,
+      </if>
+      <if test="sname != null" >
+        sName,
+      </if>
+      <if test="sdate != null" >
+        sDate,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="cname != null" >
+        cName,
+      </if>
+      <if test="caddress != null" >
+        cAddress,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="sname != null" >
+        #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="sdate != null" >
+        #{sdate,jdbcType=DATE},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="caddress != null" >
+        #{caddress,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.water.pojo.RecordsExample" resultType="java.lang.Integer" >
+    select count(*) from records
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update records
+    <set >
+      <if test="record.rid != null" >
+        rId = #{record.rid,jdbcType=INTEGER},
+      </if>
+      <if test="record.oid != null" >
+        oId = #{record.oid,jdbcType=INTEGER},
+      </if>
+      <if test="record.sname != null" >
+        sName = #{record.sname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sdate != null" >
+        sDate = #{record.sdate,jdbcType=DATE},
+      </if>
+      <if test="record.money != null" >
+        money = #{record.money,jdbcType=DOUBLE},
+      </if>
+      <if test="record.cname != null" >
+        cName = #{record.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.caddress != null" >
+        cAddress = #{record.caddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update records
+    set rId = #{record.rid,jdbcType=INTEGER},
+      oId = #{record.oid,jdbcType=INTEGER},
+      sName = #{record.sname,jdbcType=VARCHAR},
+      sDate = #{record.sdate,jdbcType=DATE},
+      money = #{record.money,jdbcType=DOUBLE},
+      cName = #{record.cname,jdbcType=VARCHAR},
+      cAddress = #{record.caddress,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.water.pojo.Records" >
+    update records
+    <set >
+      <if test="oid != null" >
+        oId = #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="sname != null" >
+        sName = #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="sdate != null" >
+        sDate = #{sdate,jdbcType=DATE},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="cname != null" >
+        cName = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="caddress != null" >
+        cAddress = #{caddress,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rId = #{rid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.water.pojo.Records" >
+    update records
+    set oId = #{oid,jdbcType=INTEGER},
+      sName = #{sname,jdbcType=VARCHAR},
+      sDate = #{sdate,jdbcType=DATE},
+      money = #{money,jdbcType=DOUBLE},
+      cName = #{cname,jdbcType=VARCHAR},
+      cAddress = #{caddress,jdbcType=VARCHAR}
+    where rId = #{rid,jdbcType=INTEGER}
+  </update>
+</mapper>
